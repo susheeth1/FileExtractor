@@ -1,0 +1,51 @@
+i have to create a python based flask app where  i have to feed the app a zip file or a or a git hub link the code must be extracted and tokensed . the tokenization should be done like this the all pythonfile needs to be extracted tokenised and stored together same goes with all the types of file need t be clubed with the same filr like python or java need to tokenised and stored together adn need to be displayed in the ui in a seprate boxes one box for python one box for images java etc and it should display me the token size numer of files and a txt file for previed and download the tokenised ttxt in the txt format and only for java file java lang should be intrigrated so there should be to options in java box one json file adter passing java code javalang so i can get the details more accurtly and and in the ui there should be details of the zip file or git hub link file link size total token size and etc and at the end if the user wants it needs to be sent to the llm to generate required data like a read me file or requirment anything this is the link of llm import requests and imges needs to be converted into base 64 and sent to the llm like inast code provide me a complete code for this project and also provide me folder structure and keep the code modular and consume less tokens so u can generate complete code and also provide me 
+import json
+ 
+url = "http://192.168.229.27:8000/v1/chat/completions"
+ 
+payload = {
+    "model": "/root/.cache/huggingface/",  # Make sure this is valid on the server
+    "messages": [
+        {"role": "system", "content": ""},
+        {"role": "user", "content": "can you provide the role of AI from the context provided"}
+    ],
+    "max_tokens": 1000,
+    "temperature": 0.1
+}
+ 
+headers = {
+    'Content-Type': 'application/json'
+}
+ 
+try:
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+    response.raise_for_status()  # Raises HTTPError if the response was unsuccessful
+    print("✅ Server Response:\n")
+    print(response.json())  # Parse JSON response
+except requests.exceptions.RequestException as e:
+    print("❌ Request failed:", e) 
+
+if image_url:
+            message_content = [
+                {"type": "text", "text": self._format_message_with_context(user_message, context)},
+                {"type": "image_url", "image_url": {"url": image_url}}
+            ]
+        else:
+            message_content = self._format_message_with_context(user_message, context)
+ 
+        payload = {
+            "model": self.llm_model_path,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message_content}
+            ],
+            "max_tokens": max_tokens,
+            "temperature": temperature
+        }
+ 
+        response = requests.post(self.llm_server_url, json=payload, timeout=60)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+        print(f"[Local LLM] HTTP {response.status_code} - {response.text}")
+        return None
