@@ -47,31 +47,18 @@ def create_directories():
 
 def install_dependencies():
     """Install Python dependencies"""
-    # Core dependencies (without PostgreSQL for local development)
+    # Core dependencies (no database required)
     dependencies = [
         "Flask==3.0.0",
-        "Flask-SQLAlchemy==3.1.1", 
         "Werkzeug==3.0.1",
         "GitPython==3.1.40",
-        "requests==2.31.0",
-        "SQLAlchemy==2.0.23",
-        "email-validator==2.1.0"
-    ]
-    
-    # Optional dependencies (skip if they fail)
-    optional_deps = [
-        "gunicorn==21.2.0",  # Not needed on Windows for local dev
-        "psycopg2-binary==2.9.9"  # Only needed for PostgreSQL
+        "requests==2.31.0"
     ]
     
     # Install core dependencies
     for dep in dependencies:
         if not run_command(f"pip install {dep}", f"Installing {dep.split('==')[0]}"):
             return False
-    
-    # Try to install optional dependencies (don't fail if they don't work)
-    for dep in optional_deps:
-        run_command(f"pip install {dep}", f"Installing {dep.split('==')[0]} (optional)")
     
     return True
 

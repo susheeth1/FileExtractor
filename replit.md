@@ -113,8 +113,8 @@ To run this application locally:
    # Activate it (Mac/Linux)  
    source venv/bin/activate
    
-   # Install dependencies
-   pip install Flask Flask-SQLAlchemy Werkzeug GitPython requests gunicorn psycopg2-binary SQLAlchemy email-validator
+   # Install minimal dependencies (no database required)
+   pip install Flask Werkzeug GitPython requests
    ```
 
 4. **Run the application**:
@@ -124,14 +124,17 @@ To run this application locally:
 
 5. **Access at**: http://localhost:5000
 
-### Optional Setup Script
-Run `python setup.py` for automated installation assistance.
+### Even Easier Setup
+Run `python setup.py` for fully automated installation - it only installs 4 simple packages now.
 
 ### Requirements
 - Python 3.11+
 - Git (for GitHub repository processing)
 - Web browser
 - 100MB+ free disk space for file processing
+
+### No Database Needed
+The application now uses simple file storage and memory - no SQL databases required!
 
 ## Deployment
 - Replit deployment: Use the Deploy button in Replit interface
