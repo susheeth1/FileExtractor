@@ -1,0 +1,142 @@
+:root {
+    --accent-color: #0d6efd;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+}
+
+.drop-zone {
+    border: 2px dashed var(--bs-border-color);
+    border-radius: 0.375rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--bs-body-bg);
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+    border-color: var(--accent-color);
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.drop-zone-content {
+    color: var(--bs-secondary-color);
+}
+
+.drop-zone.dragover .drop-zone-content {
+    color: var(--accent-color);
+}
+
+.feature-item {
+    padding: 1.5rem;
+    border-radius: 0.375rem;
+    transition: transform 0.2s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-2px);
+}
+
+.feature-item i {
+    color: var(--accent-color);
+}
+
+.token-container {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+}
+
+.token-item {
+    border-left: 3px solid var(--accent-color);
+}
+
+.token-item code {
+    color: var(--bs-info);
+    background-color: transparent;
+}
+
+.card {
+    transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* File type specific colors */
+.badge.bg-python { background-color: #3776ab !important; }
+.badge.bg-java { background-color: #ed8b00 !important; }
+.badge.bg-javascript { background-color: #f7df1e !important; color: #000 !important; }
+.badge.bg-typescript { background-color: #3178c6 !important; }
+
+/* Loading states */
+.btn[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .display-6 {
+        font-size: 1.75rem;
+    }
+    
+    .feature-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Syntax highlighting overrides for dark theme */
+pre[class*="language-"] {
+    background-color: var(--bs-dark) !important;
+    border: 1px solid var(--bs-border-color);
+}
+
+code[class*="language-"] {
+    color: var(--bs-body-color) !important;
+}
+
+/* Token type badges */
+.badge.bg-secondary {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+}
+
+/* File cards in results */
+.card.bg-dark {
+    background-color: rgba(var(--bs-dark-rgb), 0.5) !important;
+}
+
+/* Progress indicators */
+.processing {
+    position: relative;
+    overflow: hidden;
+}
+
+.processing::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}

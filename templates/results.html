@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokenization Results - Code Tokenizer</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid my-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="display-6 mb-1">
+                            <i class="fas fa-code me-3"></i>Tokenization Results
+                        </h1>
+                        <p class="text-muted mb-0">Source: {{ source }}</p>
+                    </div>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Process Another
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Code Files</h5>
+                        <h2 class="text-primary">
+                            {{ tokenized_files.code_files.values() | list | map('length') | sum }}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Image Files</h5>
+                        <h2 class="text-info">{{ tokenized_files.image_files | length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Config Files</h5>
+                        <h2 class="text-warning">{{ tokenized_files.config_files | length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Other Files</h5>
+                        <h2 class="text-secondary">{{ tokenized_files.other_files | length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Files by Language -->
+        {% if tokenized_files.code_files %}
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-3">
+                    <i class="fas fa-code me-2"></i>Code Files by Language
+                </h3>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for language, files in tokenized_files.code_files.items() %}
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-file-code me-2"></i>{{ language }}
+                            <span class="badge bg-primary ms-2">{{ files | length }} files</span>
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="toggleLanguageSection('{{ language }}')">
+                                <i class="fas fa-eye"></i> Toggle
+                            </button>
+                            <a href="{{ url_for('download_tokens', file_type=language) }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-download me-1"></i>Download
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body" id="section-{{ language }}" style="display: block;">
+                        <div class="row">
+                            {% for file in files %}
+                            <div class="col-xl-6 mb-3">
+                                <div class="card bg-dark">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-file me-2"></i>{{ file.name }}
+                                            <small class="text-muted ms-2">({{ file.size }} bytes, {{ file.lines }} lines)</small>
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Token Statistics -->
+                                        <div class="mb-3">
+                                            <h6>Token Statistics:</h6>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <small class="text-info">Total Tokens: {{ file.total_tokens }}</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-warning">Types: {{ file.token_types.keys() | length }}</small>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Token Type Breakdown -->
+                                            <div class="mt-2">
+                                                {% for token_type, count in file.token_types.items() %}
+                                                <span class="badge bg-secondary me-1">{{ token_type }}: {{ count }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Code Preview -->
+                                        <div class="mb-3">
+                                            <h6>Code Preview:</h6>
+                                            <pre class="bg-secondary p-2 rounded" style="max-height: 200px; overflow-y: auto;"><code class="language-{{ language.lower() }}">{{ file.content }}</code></pre>
+                                        </div>
+
+                                        <!-- Sample Tokens -->
+                                        <div>
+                                            <h6>Sample Tokens (first 10):</h6>
+                                            <div class="token-container" style="max-height: 150px; overflow-y: auto;">
+                                                {% for token in file.tokens[:10] %}
+                                                <div class="token-item mb-1 p-2 bg-dark rounded">
+                                                    <small>
+                                                        <strong>{{ token.type }}:</strong> 
+                                                        <code>"{{ token.string }}"</code>
+                                                        {% if token.line is defined %}
+                                                        <span class="text-muted">(Line {{ token.line }})</span>
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Image Files -->
+        {% if tokenized_files.image_files %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-image me-2"></i>Image Files
+                            <span class="badge bg-info ms-2">{{ tokenized_files.image_files | length }}</span>
+                        </h5>
+                        <button class="btn btn-sm btn-outline-info" onclick="toggleSection('images')">
+                            <i class="fas fa-eye"></i> Toggle
+                        </button>
+                    </div>
+                    <div class="card-body" id="section-images" style="display: none;">
+                        <div class="row">
+                            {% for file in tokenized_files.image_files %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ file.name }}</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Size: {{ file.size }} bytes<br>
+                                                Path: {{ file.path }}
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Config Files -->
+        {% if tokenized_files.config_files %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>Configuration Files
+                            <span class="badge bg-warning ms-2">{{ tokenized_files.config_files | length }}</span>
+                        </h5>
+                        <button class="btn btn-sm btn-outline-warning" onclick="toggleSection('config')">
+                            <i class="fas fa-eye"></i> Toggle
+                        </button>
+                    </div>
+                    <div class="card-body" id="section-config" style="display: none;">
+                        <div class="row">
+                            {% for file in tokenized_files.config_files %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ file.name }}</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Size: {{ file.size }} bytes | Lines: {{ file.lines }}<br>
+                                                Path: {{ file.path }}
+                                            </small>
+                                        </p>
+                                        <pre class="bg-secondary p-2 rounded" style="max-height: 150px; overflow-y: auto;"><code>{{ file.content }}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Other Files -->
+        {% if tokenized_files.other_files %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-file me-2"></i>Other Files
+                            <span class="badge bg-secondary ms-2">{{ tokenized_files.other_files | length }}</span>
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleSection('other')">
+                            <i class="fas fa-eye"></i> Toggle
+                        </button>
+                    </div>
+                    <div class="card-body" id="section-other" style="display: none;">
+                        <div class="row">
+                            {% for file in tokenized_files.other_files %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ file.name }}</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Size: {{ file.size }} bytes<br>
+                                                Path: {{ file.path }}
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById('section-' + sectionId);
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        function toggleLanguageSection(language) {
+            const section = document.getElementById('section-' + language);
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        // Initialize Prism.js
+        Prism.highlightAll();
+    </script>
+</body>
+</html>

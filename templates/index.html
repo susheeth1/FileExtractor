@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Tokenizer</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-code me-3"></i>Code Tokenizer
+                    </h1>
+                    <p class="lead text-muted">
+                        Extract, tokenize, and analyze code from ZIP files or GitHub repositories
+                    </p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Upload Methods -->
+                <div class="row g-4">
+                    <!-- ZIP File Upload -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-file-archive me-2"></i>Upload ZIP File
+                                </h5>
+                                <p class="card-text text-muted">
+                                    Upload a ZIP file containing your code for tokenization
+                                </p>
+                                
+                                <form id="zipForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <div class="drop-zone" id="dropZone">
+                                            <div class="drop-zone-content">
+                                                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                                <p class="mb-2">Drag & drop your ZIP file here</p>
+                                                <p class="text-muted small">or click to browse</p>
+                                            </div>
+                                            <input type="file" id="fileInput" name="file" accept=".zip" class="d-none">
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="fileInfo" class="mb-3" style="display: none;">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-file-archive me-2"></i>
+                                            <span id="fileName"></span>
+                                            <span id="fileSize" class="text-muted ms-2"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary w-100" id="zipSubmitBtn" disabled>
+                                        <i class="fas fa-upload me-2"></i>Process ZIP File
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GitHub Repository -->
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fab fa-github me-2"></i>GitHub Repository
+                                </h5>
+                                <p class="card-text text-muted">
+                                    Enter a GitHub repository URL to clone and tokenize
+                                </p>
+                                
+                                <form id="githubForm" action="{{ url_for('upload_file') }}" method="post">
+                                    <div class="mb-3">
+                                        <label for="github_url" class="form-label">Repository URL</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fab fa-github"></i>
+                                            </span>
+                                            <input type="url" 
+                                                   class="form-control" 
+                                                   id="github_url" 
+                                                   name="github_url" 
+                                                   placeholder="https://github.com/username/repository"
+                                                   pattern="https://github\.com/.+/.+"
+                                                   title="Please enter a valid GitHub repository URL">
+                                        </div>
+                                        <div class="form-text">
+                                            Example: https://github.com/user/repo
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-secondary w-100" id="githubSubmitBtn">
+                                        <i class="fas fa-download me-2"></i>Clone & Process Repository
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h3 class="text-center mb-4">Features</h3>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="feature-item">
+                            <i class="fas fa-code fa-2x mb-3"></i>
+                            <h5>Multi-Language Support</h5>
+                            <p class="text-muted">Supports Python, Java, JavaScript, TypeScript, and more</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="feature-item">
+                            <i class="fas fa-layer-group fa-2x mb-3"></i>
+                            <h5>Organized by Type</h5>
+                            <p class="text-muted">Files are automatically grouped by programming language</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="feature-item">
+                            <i class="fas fa-download fa-2x mb-3"></i>
+                            <h5>Export Results</h5>
+                            <p class="text-muted">Download tokenized results for further analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
