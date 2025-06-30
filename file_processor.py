@@ -229,8 +229,8 @@ class FileProcessor:
             tokenization_result = tokenizer.tokenize(content, file_info['name'])
             
             if tokenization_result['success']:
-                # Create tokenized text preview (just token names)
-                token_preview = ' '.join([token['type'] for token in tokenization_result['tokens'][:200]])
+                # Create tokenized text preview (actual token content)
+                token_preview = ' '.join(tokenization_result['tokens'][:200])
                 
                 file_info.update({
                     'language': language,
@@ -239,7 +239,7 @@ class FileProcessor:
                     'total_tokens': tokenization_result['total_tokens'],
                     'lines': len(content.splitlines()),
                     'token_preview': token_preview,
-                    'full_token_string': ' '.join([token['type'] for token in tokenization_result['tokens']])
+                    'full_token_string': ' '.join(tokenization_result['tokens'])
                 })
                 
                 if language not in result['code_files']:

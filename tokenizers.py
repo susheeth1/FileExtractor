@@ -26,16 +26,11 @@ class PythonTokenizer(CodeTokenizer):
             
             # Tokenize the Python code
             for tok in tokenize.generate_tokens(content_io.readline):
-                token_info = {
-                    'type': tokenize.tok_name[tok.type],
-                    'string': tok.string,
-                    'start': tok.start,
-                    'end': tok.end,
-                    'line': tok.line
-                }
-                tokens.append(token_info)
+                # Only keep the actual token string, not the type
+                if tok.string.strip():  # Skip empty/whitespace-only tokens
+                    tokens.append(tok.string)
                 
-                # Count token types
+                # Count token types for statistics
                 token_type = tokenize.tok_name[tok.type]
                 token_types[token_type] = token_types.get(token_type, 0) + 1
             
@@ -80,7 +75,6 @@ class JavaTokenizer(CodeTokenizer):
             tokens = []
             token_types = {}
             pos = 0
-            line_num = 1
             
             while pos < len(content):
                 matched = False
@@ -90,24 +84,15 @@ class JavaTokenizer(CodeTokenizer):
                     if match:
                         token_string = match.group(0)
                         
-                        if token_type != 'WHITESPACE':  # Skip whitespace tokens
-                            token_info = {
-                                'type': token_type,
-                                'string': token_string,
-                                'line': line_num,
-                                'position': pos
-                            }
-                            tokens.append(token_info)
+                        if token_type != 'WHITESPACE' and token_string.strip():
+                            tokens.append(token_string)
                             token_types[token_type] = token_types.get(token_type, 0) + 1
                         
-                        # Update line number
-                        line_num += token_string.count('\n')
                         pos = match.end()
                         matched = True
                         break
                 
                 if not matched:
-                    # Skip unrecognized character
                     pos += 1
             
             return {
@@ -154,7 +139,6 @@ class JavaScriptTokenizer(CodeTokenizer):
             tokens = []
             token_types = {}
             pos = 0
-            line_num = 1
             
             while pos < len(content):
                 matched = False
@@ -164,24 +148,15 @@ class JavaScriptTokenizer(CodeTokenizer):
                     if match:
                         token_string = match.group(0)
                         
-                        if token_type != 'WHITESPACE':  # Skip whitespace tokens
-                            token_info = {
-                                'type': token_type,
-                                'string': token_string,
-                                'line': line_num,
-                                'position': pos
-                            }
-                            tokens.append(token_info)
+                        if token_type != 'WHITESPACE' and token_string.strip():
+                            tokens.append(token_string)
                             token_types[token_type] = token_types.get(token_type, 0) + 1
                         
-                        # Update line number
-                        line_num += token_string.count('\n')
                         pos = match.end()
                         matched = True
                         break
                 
                 if not matched:
-                    # Skip unrecognized character
                     pos += 1
             
             return {
@@ -223,7 +198,6 @@ class HTMLTokenizer(CodeTokenizer):
             tokens = []
             token_types = {}
             pos = 0
-            line_num = 1
             
             while pos < len(content):
                 matched = False
@@ -233,16 +207,10 @@ class HTMLTokenizer(CodeTokenizer):
                     if match:
                         token_string = match.group(0)
                         
-                        if token_type != 'WHITESPACE':
-                            token_info = {
-                                'type': token_type,
-                                'line': line_num,
-                                'position': pos
-                            }
-                            tokens.append(token_info)
+                        if token_type != 'WHITESPACE' and token_string.strip():
+                            tokens.append(token_string)
                             token_types[token_type] = token_types.get(token_type, 0) + 1
                         
-                        line_num += token_string.count('\n')
                         pos = match.end()
                         matched = True
                         break
@@ -293,7 +261,6 @@ class CSSTokenizer(CodeTokenizer):
             tokens = []
             token_types = {}
             pos = 0
-            line_num = 1
             
             while pos < len(content):
                 matched = False
@@ -303,16 +270,10 @@ class CSSTokenizer(CodeTokenizer):
                     if match:
                         token_string = match.group(0)
                         
-                        if token_type != 'WHITESPACE':
-                            token_info = {
-                                'type': token_type,
-                                'line': line_num,
-                                'position': pos
-                            }
-                            tokens.append(token_info)
+                        if token_type != 'WHITESPACE' and token_string.strip():
+                            tokens.append(token_string)
                             token_types[token_type] = token_types.get(token_type, 0) + 1
                         
-                        line_num += token_string.count('\n')
                         pos = match.end()
                         matched = True
                         break
@@ -360,7 +321,6 @@ class GenericTokenizer(CodeTokenizer):
                                for name, pattern in patterns]
             
             pos = 0
-            line_num = 1
             
             while pos < len(content):
                 matched = False
@@ -370,16 +330,10 @@ class GenericTokenizer(CodeTokenizer):
                     if match:
                         token_string = match.group(0)
                         
-                        if token_type != 'WHITESPACE':
-                            token_info = {
-                                'type': token_type,
-                                'line': line_num,
-                                'position': pos
-                            }
-                            tokens.append(token_info)
+                        if token_type != 'WHITESPACE' and token_string.strip():
+                            tokens.append(token_string)
                             token_types[token_type] = token_types.get(token_type, 0) + 1
                         
-                        line_num += token_string.count('\n')
                         pos = match.end()
                         matched = True
                         break
