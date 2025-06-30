@@ -94,9 +94,56 @@ This is a Flask-based web application that extracts and tokenizes code from ZIP 
 - Connection pooling with health checks
 - Support for both SQLite (dev) and PostgreSQL (production)
 
+## Local Installation
+
+To run this application locally:
+
+1. **Download the project files** from this Replit or copy all files to your local machine
+
+2. **Install Python 3.11+** on your system
+
+3. **Set up the environment**:
+   ```bash
+   # Create virtual environment
+   python -m venv venv
+   
+   # Activate it (Windows)
+   venv\Scripts\activate
+   
+   # Activate it (Mac/Linux)  
+   source venv/bin/activate
+   
+   # Install dependencies
+   pip install Flask Flask-SQLAlchemy Werkzeug GitPython requests gunicorn psycopg2-binary SQLAlchemy email-validator
+   ```
+
+4. **Run the application**:
+   ```bash
+   python main.py
+   ```
+
+5. **Access at**: http://localhost:5000
+
+### Optional Setup Script
+Run `python setup.py` for automated installation assistance.
+
+### Requirements
+- Python 3.11+
+- Git (for GitHub repository processing)
+- Web browser
+- 100MB+ free disk space for file processing
+
+## Deployment
+- Replit deployment: Use the Deploy button in Replit interface
+- Local development: Follow installation steps above
+- Production: Set SESSION_SECRET environment variable
+
 ## Changelog
-- June 30, 2025. Initial setup
+- June 30, 2025: Initial setup with ZIP and GitHub processing
+- June 30, 2025: Updated tokenization to output actual text content (not type labels)
+- June 30, 2025: Added local installation documentation and setup script
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+User requested tokenized output as actual text content without token type labels.
