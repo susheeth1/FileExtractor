@@ -1,0 +1,66 @@
+PS C:\Susheeth\FileExtractor> & C:/Users/susheethg/AppData/Local/Programs/Python/Python313/python.exe c:/Susheeth/FileExtractor/setup.py
+🚀 Setting up Code Tokenizer Flask Application
+==================================================
+✓ Python 3.13 detected
+✓ Git is installed
+✓ Created necessary directories
+
+📦 Installing dependencies...  
+➤ Installing Flask...
+✓ Installing Flask completed
+➤ Installing Flask-SQLAlchemy...
+✓ Installing Flask-SQLAlchemy completed
+➤ Installing Werkzeug...
+✓ Installing Werkzeug completed
+➤ Installing GitPython...
+✓ Installing GitPython completed
+➤ Installing requests...
+✓ Installing requests completed
+➤ Installing gunicorn...
+✓ Installing gunicorn completed
+➤ Installing psycopg2-binary...
+✗ Installing psycopg2-binary failed:   DEPRECATION: Building 'psycopg2-binary' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'psycopg2-binary'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+  error: subprocess-exited-with-error
+
+  python setup.py bdist_wheel did not run successfully.
+  exit code: 1
+
+  [31 lines of output]
+  C:\Users\susheethg\AppData\Local\Programs\Python\Python313\Lib\site-packages\setuptools\dist.py:759: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+  !!
+
+          ********************************************************************************
+          Please consider removing the following classifiers in favor of a SPDX license expression:
+
+          License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+
+  !!
+    self._finalize_license_expression()
+  running bdist_wheel
+  running build
+  running build_py
+  creating build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\errorcodes.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\errors.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\extensions.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\extras.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\pool.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\sql.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\tz.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\_ipaddress.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\_json.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\_range.py -> build\lib.win-amd64-cpython-313\psycopg2
+  copying lib\__init__.py -> build\lib.win-amd64-cpython-313\psycopg2
+  running build_ext
+  building 'psycopg2._psycopg' extension
+  error: Microsoft Visual C++ 14.0 or greater is required. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/
+  [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for psycopg2-binary
+ERROR: Failed to build installable wheels for some pyproject.toml based projects (psycopg2-binary)
+
+✗ Dependency installation failed
