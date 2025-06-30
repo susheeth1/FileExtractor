@@ -200,27 +200,197 @@ class JavaScriptTokenizer(CodeTokenizer):
                 'filename': filename
             }
 
+class HTMLTokenizer(CodeTokenizer):
+    """HTML tokenizer using regex patterns"""
+    
+    def __init__(self):
+        self.token_patterns = [
+            ('COMMENT', r'<!--.*?-->'),
+            ('DOCTYPE', r'<!DOCTYPE[^>]*>'),
+            ('TAG_OPEN', r'<[a-zA-Z][^>]*>'),
+            ('TAG_CLOSE', r'</[a-zA-Z][^>]*>'),
+            ('TAG_SELF_CLOSE', r'<[a-zA-Z][^>]*/\s*>'),
+            ('ATTRIBUTE', r'\b[a-zA-Z-]+\s*=\s*["\'][^"\']*["\']'),
+            ('TEXT', r'>[^<]+<'),
+            ('WHITESPACE', r'\s+'),
+        ]
+        
+        self.compiled_patterns = [(name, re.compile(pattern, re.MULTILINE | re.DOTALL)) 
+                                 for name, pattern in self.token_patterns]
+    
+    def tokenize(self, content: str, filename: str) -> Dict[str, Any]:
+        try:
+            tokens = []
+            token_types = {}
+            pos = 0
+            line_num = 1
+            
+            while pos < len(content):
+                matched = False
+                
+                for token_type, pattern in self.compiled_patterns:
+                    match = pattern.match(content, pos)
+                    if match:
+                        token_string = match.group(0)
+                        
+                        if token_type != 'WHITESPACE':
+                            token_info = {
+                                'type': token_type,
+                                'line': line_num,
+                                'position': pos
+                            }
+                            tokens.append(token_info)
+                            token_types[token_type] = token_types.get(token_type, 0) + 1
+                        
+                        line_num += token_string.count('\n')
+                        pos = match.end()
+                        matched = True
+                        break
+                
+                if not matched:
+                    pos += 1
+            
+            return {
+                'success': True,
+                'tokens': tokens,
+                'token_types': token_types,
+                'total_tokens': len(tokens),
+                'filename': filename
+            }
+            
+        except Exception as e:
+            logger.error(f"Error tokenizing HTML file {filename}: {str(e)}")
+            return {
+                'success': False,
+                'error': str(e),
+                'filename': filename
+            }
+
+class CSSTokenizer(CodeTokenizer):
+    """CSS tokenizer using regex patterns"""
+    
+    def __init__(self):
+        self.token_patterns = [
+            ('COMMENT', r'/\*.*?\*/'),
+            ('SELECTOR', r'[a-zA-Z0-9_.-]+(?:\s*,\s*[a-zA-Z0-9_.-]+)*\s*(?=\{)'),
+            ('PROPERTY', r'[a-zA-Z-]+\s*:'),
+            ('VALUE', r':\s*[^;{}]+'),
+            ('BRACE_OPEN', r'\{'),
+            ('BRACE_CLOSE', r'\}'),
+            ('SEMICOLON', r';'),
+            ('AT_RULE', r'@[a-zA-Z-]+'),
+            ('STRING', r'"[^"]*"|\'[^\']*\''),
+            ('NUMBER', r'\b\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw|pt|pc|in|cm|mm)?\b'),
+            ('COLOR', r'#[0-9A-Fa-f]{3,8}'),
+            ('WHITESPACE', r'\s+'),
+        ]
+        
+        self.compiled_patterns = [(name, re.compile(pattern, re.MULTILINE | re.DOTALL)) 
+                                 for name, pattern in self.token_patterns]
+    
+    def tokenize(self, content: str, filename: str) -> Dict[str, Any]:
+        try:
+            tokens = []
+            token_types = {}
+            pos = 0
+            line_num = 1
+            
+            while pos < len(content):
+                matched = False
+                
+                for token_type, pattern in self.compiled_patterns:
+                    match = pattern.match(content, pos)
+                    if match:
+                        token_string = match.group(0)
+                        
+                        if token_type != 'WHITESPACE':
+                            token_info = {
+                                'type': token_type,
+                                'line': line_num,
+                                'position': pos
+                            }
+                            tokens.append(token_info)
+                            token_types[token_type] = token_types.get(token_type, 0) + 1
+                        
+                        line_num += token_string.count('\n')
+                        pos = match.end()
+                        matched = True
+                        break
+                
+                if not matched:
+                    pos += 1
+            
+            return {
+                'success': True,
+                'tokens': tokens,
+                'token_types': token_types,
+                'total_tokens': len(tokens),
+                'filename': filename
+            }
+            
+        except Exception as e:
+            logger.error(f"Error tokenizing CSS file {filename}: {str(e)}")
+            return {
+                'success': False,
+                'error': str(e),
+                'filename': filename
+            }
+
 class GenericTokenizer(CodeTokenizer):
     """Generic tokenizer for other file types"""
     
     def tokenize(self, content: str, filename: str) -> Dict[str, Any]:
         try:
-            # Simple word-based tokenization
             tokens = []
-            words = re.findall(r'\b\w+\b', content)
+            token_types = {}
             
-            for i, word in enumerate(words):
-                token_info = {
-                    'type': 'WORD',
-                    'string': word,
-                    'position': i
-                }
-                tokens.append(token_info)
+            # Enhanced tokenization patterns
+            patterns = [
+                ('KEYWORD', r'\b(?:if|else|for|while|function|class|def|return|import|export|var|let|const|public|private|static|void|int|string|boolean|true|false|null|undefined)\b'),
+                ('STRING', r'"[^"]*"|\'[^\']*\'|`[^`]*`'),
+                ('NUMBER', r'\b\d+(?:\.\d+)?\b'),
+                ('COMMENT', r'//.*?$|/\*.*?\*/|#.*?$'),
+                ('OPERATOR', r'[+\-*/%=<>!&|^~?:]+'),
+                ('DELIMITER', r'[(){}\[\];,.@]'),
+                ('IDENTIFIER', r'\b[a-zA-Z_]\w*\b'),
+                ('WHITESPACE', r'\s+'),
+            ]
+            
+            compiled_patterns = [(name, re.compile(pattern, re.MULTILINE | re.DOTALL)) 
+                               for name, pattern in patterns]
+            
+            pos = 0
+            line_num = 1
+            
+            while pos < len(content):
+                matched = False
+                
+                for token_type, pattern in compiled_patterns:
+                    match = pattern.match(content, pos)
+                    if match:
+                        token_string = match.group(0)
+                        
+                        if token_type != 'WHITESPACE':
+                            token_info = {
+                                'type': token_type,
+                                'line': line_num,
+                                'position': pos
+                            }
+                            tokens.append(token_info)
+                            token_types[token_type] = token_types.get(token_type, 0) + 1
+                        
+                        line_num += token_string.count('\n')
+                        pos = match.end()
+                        matched = True
+                        break
+                
+                if not matched:
+                    pos += 1
             
             return {
                 'success': True,
                 'tokens': tokens,
-                'token_types': {'WORD': len(tokens)},
+                'token_types': token_types,
                 'total_tokens': len(tokens),
                 'filename': filename
             }
@@ -242,6 +412,12 @@ def get_tokenizer(file_extension: str) -> CodeTokenizer:
         '.jsx': JavaScriptTokenizer(),
         '.ts': JavaScriptTokenizer(),
         '.tsx': JavaScriptTokenizer(),
+        '.html': HTMLTokenizer(),
+        '.htm': HTMLTokenizer(),
+        '.css': CSSTokenizer(),
+        '.scss': CSSTokenizer(),
+        '.sass': CSSTokenizer(),
+        '.less': CSSTokenizer(),
     }
     
     return tokenizer_map.get(file_extension.lower(), GenericTokenizer())

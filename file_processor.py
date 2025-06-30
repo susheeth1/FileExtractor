@@ -22,8 +22,16 @@ class FileProcessor:
             '.jsx': 'React JSX',
             '.ts': 'TypeScript',
             '.tsx': 'React TSX',
+            '.html': 'HTML',
+            '.htm': 'HTML',
+            '.css': 'CSS',
+            '.scss': 'SCSS',
+            '.sass': 'SASS',
+            '.less': 'LESS',
             '.c': 'C',
             '.cpp': 'C++',
+            '.cc': 'C++',
+            '.cxx': 'C++',
             '.h': 'C Header',
             '.hpp': 'C++ Header',
             '.cs': 'C#',
@@ -32,14 +40,30 @@ class FileProcessor:
             '.go': 'Go',
             '.rs': 'Rust',
             '.kt': 'Kotlin',
+            '.kts': 'Kotlin Script',
             '.swift': 'Swift',
             '.scala': 'Scala',
             '.r': 'R',
             '.m': 'Objective-C',
+            '.mm': 'Objective-C++',
             '.pl': 'Perl',
+            '.pm': 'Perl Module',
             '.sh': 'Shell',
+            '.bash': 'Bash',
+            '.zsh': 'Zsh',
+            '.fish': 'Fish',
             '.bat': 'Batch',
+            '.cmd': 'Command',
             '.ps1': 'PowerShell',
+            '.psm1': 'PowerShell Module',
+            '.vue': 'Vue',
+            '.svelte': 'Svelte',
+            '.dart': 'Dart',
+            '.lua': 'Lua',
+            '.sql': 'SQL',
+            '.xml': 'XML',
+            '.xsl': 'XSL',
+            '.xslt': 'XSLT',
         }
         
         self.image_extensions = {
@@ -205,13 +229,17 @@ class FileProcessor:
             tokenization_result = tokenizer.tokenize(content, file_info['name'])
             
             if tokenization_result['success']:
+                # Create tokenized text preview (just token names)
+                token_preview = ' '.join([token['type'] for token in tokenization_result['tokens'][:200]])
+                
                 file_info.update({
-                    'content': content[:1000] + '...' if len(content) > 1000 else content,  # Preview
                     'language': language,
-                    'tokens': tokenization_result['tokens'][:100],  # First 100 tokens for display
+                    'tokens': tokenization_result['tokens'],
                     'token_types': tokenization_result['token_types'],
                     'total_tokens': tokenization_result['total_tokens'],
-                    'lines': len(content.splitlines())
+                    'lines': len(content.splitlines()),
+                    'token_preview': token_preview,
+                    'full_token_string': ' '.join([token['type'] for token in tokenization_result['tokens']])
                 })
                 
                 if language not in result['code_files']:
